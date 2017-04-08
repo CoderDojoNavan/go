@@ -1,0 +1,47 @@
+// Chatapp protocol definition. This defines how the messages are sent between
+// the server and the clients
+syntax = "proto3";
+
+package chatapp;
+
+// ChatAppService is the main service
+service ChatAppService {
+  // Register registers a bot. It takes in the RegisterRequest with a name of
+  // the bot and returns a token
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+
+  // Listen for all incoming messages
+  rpc Listen (Message) returns (stream Message);
+
+  // Broadcast to all
+  rpc Broadcast (Message) returns (Empty);
+
+  // Disconnect from the server with a message
+  rpc Disconnect (Message) returns (Empty);
+}
+
+// Just empty
+message Empty {}
+
+// Register the bot with the server
+message RegisterRequest {
+  string name = 1;
+}
+
+// get the token back so it can be used in the requests
+message RegisterResponse {
+  string token = 2;
+}
+
+// Message contains the individual messages send to and from the server
+message Message {
+  // The token identifies the bot with the server, it is only set by the bot in
+  // the message.
+  string token = 1;
+
+  // Name of the person sending the message
+  string name = 2;
+  // Data is the binary message to be send to the server, for now it will be
+  // converted to string, but its still worth keeping it in binary form.
+  bytes data = 3;
+}
